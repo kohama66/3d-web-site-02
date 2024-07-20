@@ -6,8 +6,10 @@ import {
   useGLTF,
   SoftShadows,
   useTexture,
+  Text,
+  Billboard,
 } from "@react-three/drei";
-import { RepeatWrapping, SpotLightHelper, type Mesh } from "three";
+import { Group, RepeatWrapping, SpotLightHelper, type Mesh } from "three";
 import { DepthOfField, EffectComposer } from "@react-three/postprocessing";
 
 const Jar: React.FC = () => {
@@ -24,7 +26,13 @@ const Jar: React.FC = () => {
     }
   });
 
-  return <primitive object={gltf.scene} ref={jarRef} />;
+  const handleClick = () => {
+    if (jarRef.current) {
+      jarRef.current.rotation.y = Math.random() * 2 - 1;
+    }
+  };
+
+  return <primitive object={gltf.scene} ref={jarRef} onClick={handleClick} />;
 };
 
 const Floor: React.FC = () => {
@@ -53,6 +61,7 @@ export const GL: React.FC = () => {
         position={[0, 0, 4]}
       />
 
+      <Title />
       <Jar />
       <Floor />
 
@@ -68,11 +77,34 @@ export const GL: React.FC = () => {
   );
 };
 
-const DebugFrame: React.FC = () => {
+const Title: React.FC = () => {
+  const ref = useRef<Group>(null);
+
+  useFrame(() => {
+    if (ref.current) {
+      ref.current.rotation.y = Math.sin(performance.now() * 0.01) * 0.1;
+    }
+  });
+
   return (
-    <>
-      <Grid infiniteGrid={true} cellSize={1} sectionSize={5} />
-      <axesHelper args={[5]} />
-    </>
+    <Billboard>
+      <group ref={ref}>
+        <Text position={[-1, 0, 0]} fontSize={0.6}>
+          壺
+        </Text>
+        <Text position={[1, 0, 0]} fontSize={0.6}>
+          壺
+        </Text>
+      </group>
+    </Billboard>
   );
 };
+
+// const DebugFrame: React.FC = () => {
+//   return (
+//     <>
+//       <Grid infiniteGrid={true} cellSize={1} sectionSize={5} />
+//       <axesHelper args={[5]} />
+//     </>
+//   );
+// };
