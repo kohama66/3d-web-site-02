@@ -3,8 +3,64 @@ import { GL } from '../components/GL';
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="壺墓場">
 	<main>
-		<GL client:only />
+		<div class="title">
+			<h1>壺墓場</h1>
+			<p>不要な壺はこちらにお願いします<br>
+				生きている場合でも大丈夫です<br>
+				料金は半額前払い、成功後に残りのお支払いをお願いします<br>
+				微兎でも大丈夫です
+			</p>
+		</div>
+
+		<div class="address">
+			<p>東京都千代田区燼萬讃腹4-五0七 趾髪</p>
+		</div>
+
+
+		<section class="bggl">
+			<GL client:only />
+		</section>
 	</main>
 </Layout>
+
+<style>
+	main {
+		position: relative;
+		padding: 48px;
+		color: #ffffffbb;
+		min-height: 100vh;
+
+		.title {	
+			h1 {
+				font-size: 160px;
+				line-height: 1;
+				margin-bottom: 24px;
+			}
+			
+			p {
+				font-size: 24px;
+				line-height: 1.5;
+			}
+		}
+
+		.address {
+			position: absolute;
+			bottom: 48px;
+			p {
+				font-size: 24px;
+				line-height: 1.5;
+			}
+		}
+	}
+
+	.bggl {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+	}
+</style>

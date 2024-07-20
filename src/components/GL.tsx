@@ -1,38 +1,33 @@
-import React, { useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import React, { useRef } from "react";
+import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
-  Grid,
   useGLTF,
   SoftShadows,
   useTexture,
-  Text,
-  Billboard,
+  Clone,
 } from "@react-three/drei";
-import { Group, RepeatWrapping, SpotLightHelper, type Mesh } from "three";
-import { DepthOfField, EffectComposer } from "@react-three/postprocessing";
+import { Group } from "three";
 
-const Jar: React.FC = () => {
+const Jar: React.FC<{ x?: number; z?: number }> = ({ x = 0, z = 0 }) => {
   const gltf = useGLTF("jar.glb");
-  const jarRef = useRef<Mesh>(null);
+  const jarRef = useRef<Group>(null);
 
   // モデルの回転と位置を設定
-  gltf.scene.rotation.y = -Math.PI / 2; // Y軸周りに90度回転
+  // gltf.scene.rotation.y = -Math.PI / 2; // Y軸周りに90度回転
 
   gltf.scene.traverse((child) => {
     if (child) {
       child.castShadow = true;
       child.receiveShadow = true;
+      child.position.x = x;
+      child.position.z = z;
+      child.rotation.y = Math.random() * 1.5;
     }
   });
 
-  const handleClick = () => {
-    if (jarRef.current) {
-      jarRef.current.rotation.y = Math.random() * 2 - 1;
-    }
-  };
-
-  return <primitive object={gltf.scene} ref={jarRef} onClick={handleClick} />;
+  // return <primitive object={gltf.scene} ref={jarRef} onClick={handleClick} />;
+  return <Clone object={gltf.scene} ref={jarRef} />;
 };
 
 const Floor: React.FC = () => {
@@ -46,11 +41,27 @@ const Floor: React.FC = () => {
   );
 };
 
+const JarGroup: React.FC = () => {
+  return (
+    <>
+      <Jar />
+      <Jar x={0.8} />
+      <Jar x={-0.8} />
+      <Jar x={-1.6} />
+      <Jar x={0.8} z={0.8} />
+      <Jar x={-1.6} z={-0.8} />
+      <Jar z={-0.8} />
+      <Jar z={-1.6} />
+      <Jar x={0} z={0.8} />
+    </>
+  );
+};
+
 export const GL: React.FC = () => {
   return (
     <Canvas
       style={{ height: "100vh", width: "100vw", backgroundColor: "#000" }}
-      camera={{ position: [0.5, 0.5, 1.5] }}
+      camera={{ position: [0.5, 2, 2] }}
       shadows
     >
       <spotLight color={"#ee82ee"} intensity={40} castShadow decay={3} />
@@ -61,15 +72,16 @@ export const GL: React.FC = () => {
         position={[0, 0, 4]}
       />
 
-      <Title />
-      <Jar />
+      {/* <Title /> */}
+      <JarGroup />
       <Floor />
 
       <OrbitControls
         enablePan={false}
-        maxPolarAngle={Math.PI / 2}
-        maxDistance={3}
-        minDistance={1}
+        // maxPolarAngle={Math.PI / 2}
+        // maxDistance={3}
+        // minDistance={1}
+        autoRotate
       />
       <SoftShadows />
       {/* <DebugFrame /> */}
@@ -77,28 +89,28 @@ export const GL: React.FC = () => {
   );
 };
 
-const Title: React.FC = () => {
-  const ref = useRef<Group>(null);
+// const Title: React.FC = () => {
+//   const ref = useRef<Group>(null);
 
-  useFrame(() => {
-    if (ref.current) {
-      ref.current.rotation.y = Math.sin(performance.now() * 0.01) * 0.1;
-    }
-  });
+//   // useFrame(() => {
+//   //   if (ref.current) {
+//   //     ref.current.rotation.y = Math.sin(performance.now() * 0.01) * 0.1;
+//   //   }
+//   // });
 
-  return (
-    <Billboard>
-      <group ref={ref}>
-        <Text position={[-1, 0, 0]} fontSize={0.6}>
-          壺
-        </Text>
-        <Text position={[1, 0, 0]} fontSize={0.6}>
-          壺
-        </Text>
-      </group>
-    </Billboard>
-  );
-};
+//   return (
+//     <Billboard>
+//       <group ref={ref}>
+//         <Text position={[-1, 0, 0]} fontSize={0.6}>
+//           壺墓場
+//         </Text>
+//         {/* <Text position={[1, 0, 0]} fontSize={0.6}>
+//           壺
+//         </Text> */}
+//       </group>
+//     </Billboard>
+//   );
+// };
 
 // const DebugFrame: React.FC = () => {
 //   return (
