@@ -7,9 +7,10 @@ import {
   RoundedBox,
   useGLTF,
 } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import type React from "react";
-import { Color } from "three";
+import { useRef } from "react";
+import { Color, Group, Mesh } from "three";
 
 export const WhaleGL: React.FC = () => {
   const speed = 10;
@@ -19,7 +20,7 @@ export const WhaleGL: React.FC = () => {
         camera={{ position: [0, 0, -2.5] }}
         style={{ backgroundColor: "#ededed" }}
       >
-        <OrbitControls autoRotate autoRotateSpeed={4} />
+        <OrbitControls />
 
         <ambientLight intensity={1.2} />
         <Environment resolution={1024}>
@@ -72,8 +73,16 @@ const Whale: React.FC = () => {
 };
 
 const Aquarium: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const ref = useRef<Group>(null);
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (ref.current) {
+      ref.current.rotation.y = t * 0.5;
+    }
+  });
+
   return (
-    <group rotation={[0, 1.5, 0]}>
+    <group rotation={[0, 1.5, 0]} ref={ref}>
       <mesh position={[0, 0, 0]}>
         {/* <sphereGeometry args={[1, 64, 64]} /> */}
         {/* <boxGeometry args={[1, 1.2, 2]} /> */}
